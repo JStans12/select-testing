@@ -1,0 +1,8 @@
+<div class='container'>
+  {{#power-select
+    options=selectOptions
+    onchange=(action 'doNothing')
+    as |item|}}
+    {{item}}
+  {{/power-select}}
+</div>
