@@ -1,8 +1,11 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  selectOptions: ['a','b','c'],
+  selectItems: ['a','b','c'],
+  item: ['a'],
   actions: {
-    doNothing() {}
+    chooseItem(item) {
+      this.set('item', item)
+    }
   }
 });
