@@ -1,50 +1,42 @@
-# select-testing
+### selectChoose() works as expected in acceptance tests:
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+```js
+// PASSES
+test('can select an item from dropdown', function(assert) {
+  visit('/select-page');
+  selectChoose('.select-container', 'b');
 
-## Prerequisites
+  andThen(function() {
+    assert.equal($('.ember-power-select-selected-item').text().trim(), 'b')
+  });
+});
+```
+### selectChoose() fails in integration tests:
 
-You will need the following things properly installed on your computer.
+```js
+test('can use selectChoose', function(assert) {
+  this.render(hbs`{{select-list}}`);
+  selectChoose('.select-container', 'b');
+  assert.equal($('.ember-power-select-selected-item').text().trim(), 'b')
+});
 
-* [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with NPM)
-* [Ember CLI](https://ember-cli.com/)
-* [PhantomJS](http://phantomjs.org/)
+// expects 'b' but is 'a'
+```
 
-## Installation
+a `debugger;` between above the assert will show that selectChoose is opening the dropdown, but not selecting an option.
 
-* `git clone <repository-url>` this repository
-* `cd select-testing`
-* `npm install`
+`andThen()` is not available in integration tests, so we can try it with a `wait()`
 
-## Running / Development
+```js
+test('can use selectChoose with wait()', function(assert) {
+  this.render(hbs`{{select-list}}`);
+  selectChoose('.select-container', 'b');
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
+  return wait()
+    .then(() => {
+    assert.equal($('.ember-power-select-selected-item').text().trim(), 'b')
+  });
+})
 
-### Code Generators
-
-Make use of the many generators for code, try `ember help generate` for more details
-
-### Running Tests
-
-* `ember test`
-* `ember test --server`
-
-### Building
-
-* `ember build` (development)
-* `ember build --environment production` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
-
-## Further Reading / Useful Links
-
-* [ember.js](http://emberjs.com/)
-* [ember-cli](https://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+// still fails expecting 'b', but getting 'a'
+```
