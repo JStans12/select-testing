@@ -12,7 +12,6 @@ test('can select an item from dropdown', function(assert) {
   selectChoose('.select-container', 'b');
 
   andThen(function() {
-    debugger;
     assert.equal($('.ember-power-select-selected-item').text().trim(), 'b')
   });
 });
